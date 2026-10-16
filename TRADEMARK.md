@@ -1,26 +1,25 @@
-# 品牌与商标说明（Brand & Trademark Notice）
+# Brand and Trademark Notice
 
-本项目采用 **MIT 许可证**（见 `LICENSE`）：任何人**都可以**自由使用、修改、商用、再发布，
-包括把你的修改闭源后用于商业服务 —— 这一点我们是有意为之，不需要单独申请授权。
+> 中文版: [TRADEMARK.zh-CN.md](TRADEMARK.zh-CN.md)
 
-但 **MIT 许可证只授权「代码」，不授权「品牌」**。以下内容**不在**授权范围内：
+This project is released under the **MIT license** (see [LICENSE](LICENSE)). Anyone may use, modify, sell, and redistribute the code, including shipping a modified version as a closed-source commercial service. That is intentional — no permission needed.
 
-- 名称 **KitterHub**（以及 KitterHubSE 等衍生叫法）
-- 项目站标、图标（`frontend/public/kitter-logo.png`、`kitter-favicon.png` 等图形资源）
-- 线上站点的域名（`hub.kitter.cn` 等）
+**The MIT license covers the code, not the brand.** The following are *not* licensed:
 
-也就是说：
+- the name **KitterHub** (and derivatives such as KitterHubSE)
+- the project logo and icon artwork (`frontend/public/kitter-logo.png`, `kitter-favicon.png` and related files)
+- the domains the official site uses (for example `hub.kitter.cn`)
 
-| 你可以 | 你不可以 |
+In other words:
+
+| You may | You may not |
 |---|---|
-| 拿这套代码搭自己的社区，随便改、随便商用 | 把你的站点叫成 KitterHub，或让人误以为是我们官方 |
-| 改完闭源、卖服务 | 使用我们的站标/图标作为你自己的品牌标识 |
-| 在 README 里说明"基于 KitterHub 开发" | 用我们的名义发布、或以官方身份招募用户 |
+| Run your own community on this code, modified however you like, commercially or not | Call your site KitterHub, or imply that it is the official one |
+| Ship your fork closed-source and charge for it | Use the project logo as your own brand mark |
+| Say "based on KitterHub" in your README | Publish under our name or recruit users as if you were us |
 
-如果你要在自己的部署里使用这套代码，请**替换站标与名称**，并保留一句来源说明（例如
-"Based on KitterHub, MIT licensed"）。这样既符合许可证，也避免用户混淆。
+If you deploy this code, please replace the name and the logo artwork, and keep an attribution line such as `Based on KitterHub, MIT licensed`.
 
-## 关于用户数据
+## About user data
 
-代码开源**不包含任何用户数据**。部署者需要自行负责：数据合规、未成年人保护、内容审核与
-所在地法律法规的遵守 —— 这些责任随部署一起转移给部署者，与本项目维护者无关。
+The open-source release contains **no user data**. Whoever deploys it is responsible for data protection, the safety of minors, content moderation, and compliance with their own local law. That responsibility travels with the deployment, not with the original authors.

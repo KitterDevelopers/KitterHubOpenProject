@@ -1,88 +1,36 @@
-# KitterHub 公开接口
+# Public API
 
-> 给站外页面 / 合作方用的只读接口。无需鉴权、无需密钥、无需传 token。
-> 数据结构变更会同步本文件；字段名是公开契约，不要依赖本文档以外的字段。
+> 中文版: [public-api.zh-CN.md](public-api.zh-CN.md)
 
-**Base URL**：`https://example.com`
+A small set of endpoints under `/api/public/*` is meant for callers outside the site itself. They require no authentication, they are read-only, and they are deliberately small — everything else lives behind a session.
 
----
+Because these are the endpoints other people will code against, their **field-level contract is generated from the Pydantic response schemas**. Run the application with `NIMAO_DOCS=1` and read `/openapi.json` (or `/docs`) for the authoritative shape; this page only explains the shape of the agreement.
 
-## GET /api/public/works
+## Guarantees
 
-首页作品列表（与站内首页「最新投稿 / 官方精选」同一批稿件）。
+- **No authentication required**, and no cookies or tokens are read.
+- **Read-only.** There is no public write endpoint.
+- **Stable field names.** Fields are added, not renamed. If a field must change, it is added alongside the old one and the old one is deprecated first.
+- **Explicit pagination.** List responses accept `skip` and `limit` and return the items; ask for the total separately if you need it.
+- **UTC timestamps**, ISO-8601 formatted.
+- **JSON only**, UTF-8.
 
-### 请求参数
+## Absolute URLs
 
-| 参数 | 类型 | 默认 | 说明 |
-|---|---|---|---|
-| `section` | string | `newest` | `newest` 最新投稿 ｜ `featured` 官方精选。其他值返回 `422` |
-| `limit` | number | `12` | 1~50，超出范围自动夹取 |
+Responses that contain links build them from `NIMAO_PUBLIC_BASE_URL` when it is set. When it is empty, the base is inferred from the incoming request host — which is convenient on a laptop and wrong behind a proxy if the header is not forwarded. **In production, set `NIMAO_PUBLIC_BASE_URL` explicitly.**
 
-### 响应
+## Errors
 
-```json
-{
-  "section": "newest",
-  "count": 1,
-  "items": [
-    {
-      "id": 1,
-      "title": "示例作品标题",
-      "description": "示例作品介绍，纯文本，可含换行",
-      "cover": "https://example.com/uploads/example.jpg",
-      "url": "https://example.com/works/1",
-      "play_url": "https://player.example.com/player?type=2&workId=100000001",
-      "author": {
-        "uid": "10001",
-        "name": "示例用户",
-        "avatar": "https://cdn.example.com/avatar/example.png"
-      }
-    }
-  ]
-}
+Errors are JSON with a `detail` field, using ordinary status codes: `400` for a bad request, `404` for a missing resource, `429` when a rate limit is configured and exceeded, `503` when a subsystem is switched off.
+
+## Rate limits
+
+If `NIMAO_LIMIT_RATE` is enabled, public endpoints are subject to the same per-IP limit as the rest of the site (`NIMAO_RATE_LIMIT`, default 300 per minute). Cache responsibly: these endpoints hit the database.
+
+## Example
+
+```bash
+curl -s "https://example.com/api/public/..." -H 'Accept: application/json'
 ```
 
-### 字段
-
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| `id` | number | 作品 ID |
-| `title` | string | 作品名 |
-| `description` | string | 作品介绍，纯文本，可能含换行，可能为空串 |
-| `cover` | string \| null | 封面图，绝对地址；无封面为 `null` |
-| `url` | string | 作品页链接（KitterHub 站内） |
-| `play_url` | string \| null | 直接游玩地址：编辑器作品为播放器链接（可 iframe），外链稿件为原作者网址 |
-| `author.uid` | string | 作者 UID，个人主页 `{Base URL}/users/{uid}` |
-| `author.name` | string | 作者名（昵称，无昵称时为用户名） |
-| `author.avatar` | string \| null | 作者头像，绝对地址；未设置头像为 `null` |
-
----
-
-## GET /api/public/announcement
-
-当前生效的站点公告（首页顶部那条）。无需登录、无参数。
-
-### 响应
-
-```json
-{ "announcement": "公告正文，纯文本；没有公告时为空串" }
-```
-
-### 字段
-
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| `announcement` | string | 当前生效的公告文本（纯文本，可能含换行）；未设置时为空串 |
-
-> 定时公告（后台设置的「到点自动发布」）属于后台排期概念，不对外暴露；本接口只返回**此刻**该显示的那条。
-
----
-
-## 约定
-
-- 只返回**已上架**作品（审核中、被驳回、定时未到的不会出现）。
-- `cover` / `author.avatar` / `play_url` 都可能为 `null`；站内头像未设置时显示首字母色块，调用方可自行占位。
-- 跨域已放开：响应带 `Access-Control-Allow-Origin: *`，`OPTIONS` 预检返回 `204`，浏览器可直接 `fetch`。
-- 响应带 `Cache-Control: public, max-age=60`。请自行缓存，不要高频轮询。
-- 站点目前只有 **http**。如果你的页面是 https，浏览器会按「混合内容」拦截图片与请求；这种情况请改为服务端调用后转发。
-- 引用时请注明来源 KitterHub，并保留指向 `url` 的链接。
+Exact paths and response examples belong in the generated OpenAPI document, not in a hand-written markdown file that drifts away from the code. If you are integrating this project and something in `/openapi.json` is unclear, open an issue — the fix is better schema documentation, which benefits everyone.
