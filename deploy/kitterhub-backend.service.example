@@ -1,0 +1,65 @@
+# =============================================================================
+# KitterHub 后端 systemd 服务单元示例
+# =============================================================================
+# 用法：
+#   sudo cp deploy/kitterhub-backend.service.example \
+#           /etc/systemd/system/kitterhub-backend.service
+#   sudo editor /etc/systemd/system/kitterhub-backend.service   # 按下表替换占位符
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now kitterhub-backend
+#
+# ★ 使用前必须替换的占位符：
+#   kitterhub        → 运行本服务的系统用户（建议专用低权限用户）
+#   /srv/kitterhub   → 你的实际部署路径
+#   /etc/kitterhub/backend.env → 你的环境变量文件路径
+#
+# ★ 密钥一律通过 EnvironmentFile 注入，**不要把密钥写进本文件**，
+#   更不要把 .env / backend.env 提交进仓库（.gitignore 已覆盖）。
+#   至少必须提供 NIMAO_SECRET_KEY，否则后端会拒绝启动
+#   （见 backend/app/config.py：缺失、仍是占位符或短于 32 字符都会抛 RuntimeError）。
+#
+# 说明：后端只监听 127.0.0.1:8000（backend/run.py 写死），公网流量一律经 nginx。
+#       因此本单元**不需要**开防火墙端口，也不要改成 0.0.0.0。
+# =============================================================================
+
+[Unit]
+Description=KitterHub backend (FastAPI + Socket.IO)
+Documentation=file:/srv/kitterhub/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=kitterhub
+Group=kitterhub
+
+# ★ 环境变量文件：权限建议 600，属主为该服务用户
+#   内容参考 backend/.env.example（变量名前缀统一为 NIMAO_）
+EnvironmentFile=/etc/kitterhub/backend.env
+
+WorkingDirectory=/srv/kitterhub/backend
+
+# ★ 用虚拟环境里的解释器，不要用系统 python
+ExecStart=/srv/kitterhub/backend/.venv/bin/python run.py
+
+Restart=always
+RestartSec=3
+
+# 日志进 journald：journalctl -u kitterhub-backend -f
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=kitterhub-backend
+
+# ---- 安全加固（建议保持开启）----
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+# 后端需要在 backend/ 下写 SQLite、uploads/ 与 Pages 目录，
+# ProtectSystem=full 只把 /usr /boot /etc 设为只读，/srv 仍可写。
+
+[Install]
+WantedBy=multi-user.target

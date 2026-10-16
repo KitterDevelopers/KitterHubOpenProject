@@ -1,0 +1,34 @@
+# KitterHub · https://example.com
+# 欢迎搜索引擎抓取公开内容。
+
+User-agent: *
+Allow: /
+
+# 接口、私有页面、编辑类页面不要进索引：
+# 这个站是单页应用，任何未知路径都会返回 200 + 首页 HTML（软 404），
+# 不挡一下的话搜索引擎很容易把一堆无意义的 URL 收进索引。
+Disallow: /api/
+Disallow: /admin
+Disallow: /settings
+Disallow: /notifications
+Disallow: /messages
+Disallow: /chat
+Disallow: /me
+Disallow: /xp
+Disallow: /favorites
+Disallow: /history
+Disallow: /later
+Disallow: /collections
+Disallow: /create
+Disallow: /verify
+Disallow: /banned
+Disallow: /my-reports
+Disallow: /works/new
+Disallow: /posts/new
+Disallow: /studios/new
+Disallow: /*/edit
+
+# 图片资源照常抓（图片搜索也是流量来源）
+Allow: /uploads/
+
+Sitemap: https://example.com/sitemap.xml

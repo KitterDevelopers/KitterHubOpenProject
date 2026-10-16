@@ -1,0 +1,30 @@
+# KitterHub 后端依赖
+# 安装：python -m venv .venv && .venv/Scripts/activate && pip install -r requirements.txt
+#
+# 说明：本文件只列**代码里直接 import 的第三方包**。
+#   starlette 由 fastapi 传递安装（main.py 里 `from starlette.responses import Response`），
+#   因此不单独固定版本，避免与 fastapi 的版本约束打架。
+
+# --- Web 框架与服务器 ---
+fastapi>=0.115
+uvicorn[standard]>=0.34
+
+# --- 数据层 ---
+sqlalchemy>=2.0.36
+
+# --- 数据校验 ---
+pydantic>=2.10
+email-validator>=2.2          # pydantic 的 EmailStr 需要（邮箱注册 / 找回密码）
+
+# --- 鉴权 ---
+PyJWT>=2.10                   # 代码里 import jwt
+bcrypt>=4.2                   # 密码哈希
+
+# --- 实时通信（私信 / 通知推送）---
+python-socketio>=5.11
+
+# --- 文件上传（FastAPI 的 UploadFile / Form 依赖它）---
+python-multipart>=0.0.20
+
+# --- 本地开发便利：让 backend/.env 能被自动读取（不装则只能用系统环境变量）---
+python-dotenv>=1.0

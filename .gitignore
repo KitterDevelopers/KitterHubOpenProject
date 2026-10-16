@@ -1,0 +1,183 @@
+# =============================================================================
+# KitterHub —— 开源版本 .gitignore
+# 目标：任何密钥、数据库、构建产物、用户上传内容都不得进入版本库。
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# 密钥与环境变量（★ 最重要：只提交 *.example）
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.env
+!*.env.example
+.env.local
+.env.development.local
+.env.production.local
+secrets.env
+*.secret
+*.secrets
+# 常见密钥/证书文件名（私钥绝不入库）
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+*_ed25519*
+*_rsa
+known_hosts
+# 令牌 / 凭据导出文件
+*token*.txt
+*token*.json
+*cred*.json
+*cred*.txt
+*credential*
+admin_token*
+ro_token*
+probe_token*
+
+# ---------------------------------------------------------------------------
+# 数据库（含真实用户数据与密码哈希，绝不入库）
+# ---------------------------------------------------------------------------
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.sqlite3-journal
+nimao.db
+*.dump
+*.sql
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+downloads/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.venv/
+venv/
+env/
+ENV/
+.python-version
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+*.log
+
+# ---------------------------------------------------------------------------
+# Node / 前端
+# ---------------------------------------------------------------------------
+node_modules/
+.npm/
+.npm-cache/
+.pnpm-store/
+.yarn/
+dist/
+dist-ssr/
+build/
+.vite/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+
+# ---------------------------------------------------------------------------
+# 运行时数据与用户上传内容（★ 可能含真实用户数据，绝不入库）
+# ---------------------------------------------------------------------------
+backend/uploads/
+backend/private/
+backend/data/
+backend/tmp/
+uploads/
+private/
+data/
+tmp/
+temp/
+.cache/
+*.sb3
+*.zip
+*.apk
+*.aab
+*.ipa
+*.msi
+*.exe
+*.dmg
+*.iso
+
+# ---------------------------------------------------------------------------
+# 备份 / 临时 / 历史工作目录（本项目历史遗留，一律忽略）
+# ---------------------------------------------------------------------------
+.forensics/
+.apkbuild/
+moved/
+backup/
+backups/
+*.bak
+*.bak2
+*.bak3
+*.bak_*
+*.orig
+*.rej
+*.tmp
+*.temp
+*~
+*.swp
+*.swo
+.tmp/
+# tmph2_xxxx / tmpoo_xxxx 之类的临时目录
+tmph*/
+tmpo*/
+
+# ---------------------------------------------------------------------------
+# 编辑器 / 操作系统
+# ---------------------------------------------------------------------------
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.iml
+*.sublime-workspace
+*.sublime-project
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ---------------------------------------------------------------------------
+# 本项目专有（内部审计 / 抓取 / 验证产物）
+# ---------------------------------------------------------------------------
+*.har
+*.webp.log
+screenshots/tmp/

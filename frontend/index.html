@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 站标：ico 在前（老 IE / 老浏览器只认 ico），PNG 在后（现代浏览器拿到更清晰的大图）。
+         ico 由 kitter-favicon.png 生成，含 16/32/48/64 四种尺寸。 -->
+    <!-- v=2：IE 的 favicon 缓存是按 URL 记的，Ctrl+F5 刷页面不会更新图标，
+         只有让 URL 变一次才会重新拉取。以后换图标就把这个版本号 +1。 -->
+    <link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48 64x64" />
+    <link rel="icon" type="image/png" sizes="256x256" href="/kitter-favicon.png?v=2" />
+    <link rel="apple-touch-icon" href="/kitter-favicon.png?v=2" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0061a4" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- 标题：只写品牌本身。站长定的规矩是「品牌只有 KitterHub」——
+         曾经为了 SEO 在这里塞过「KitterHub · 编程猫作品社区」，那是拿别人的品牌当我们的身份，
+         已改回。关键词放在下面的 description 里就够了，标题不碰。 -->
+    <title>KitterHub</title>
+    <meta name="description" content="KitterHub 是一个创作者社区：投稿和展示用 Kitten / NEMO / KN / Scratch 做的作品，逛论坛、加工作室，和创作者们交流。支持编程猫、邮箱与 GitHub 登录。" />
+    <link rel="canonical" href="https://example.com/" />
+
+    <!-- 分享到微信 / QQ / 论坛时的卡片信息 -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KitterHub" />
+    <meta property="og:title" content="KitterHub" />
+    <meta property="og:description" content="投稿和展示自己的作品，逛论坛、加工作室，和创作者们一起用代码创造世界。" />
+    <meta property="og:url" content="https://example.com/" />
+    <meta property="og:image" content="https://example.com/kitter-logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- 百度搜索资源平台「HTML 标签验证」：把 content 换成平台给你的那串码，
+         去掉注释、重新构建部署即可。（Google / Bing 各用它们自己的方式验证） -->
+    <!-- <meta name="baidu-site-verification" content="codeva-在这里填验证码" /> -->
+  </head>
+  <body>
+    <!--
+      ★ #root 里这段是给「不执行 JS 的爬虫」看的兜底正文（不是给用户看的）。
+      React 挂载时会整段替换掉它，正常用户看不到；
+      但如果 JS 没加载成功（或被禁用），页面也不会是一片空白。
+      这是单页应用不上 SSR 时，让百度这类爬虫能读到正文与内链的最省事做法。
+    -->
+    <div id="root">
+      <main>
+        <h1>KitterHub</h1>
+        <p>
+          KitterHub 是一个面向创作者的社区：把自己用 Kitten、NEMO、KN、Scratch 等编辑器做的作品投稿上来，
+          在论坛里提问和分享，加入感兴趣的工作室，和其他创作者一起交流。
+        </p>
+        <p>
+          <a href="/discover">发现作品</a> ·
+          <a href="/forum">社区论坛</a> ·
+          <a href="/studios">工作室</a> ·
+          <a href="/help">帮助中心</a> ·
+          <a href="/help.html">完整使用说明</a>
+        </p>
+        <p>登录方式：编程猫账号、邮箱注册，也支持 GitHub 登录。</p>
+      </main>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

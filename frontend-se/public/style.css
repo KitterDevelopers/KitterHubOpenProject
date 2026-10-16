@@ -1,0 +1,41 @@
+/* KitterHub 精简版样式：只用 CSS2.1，约 30 条规则
+   禁止出现：var(--x)、flex、grid、calc()、:has()、外部字体、@import
+   布局靠块级流与表格 —— 这样 IE 才不会错乱 */
+
+body { font: 14px/1.65 "Microsoft YaHei", SimSun, sans-serif; margin: 0; padding: 10px; color: #222; background: #fff; }
+a { color: #0645ad; text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1 { font-size: 18px; margin: 0 0 8px; }
+h2 { font-size: 15px; margin: 16px 0 6px; }
+h3 { font-size: 14px; margin: 12px 0 6px; }
+
+.top { background: #f2f2f2; border-bottom: 1px solid #ddd; padding: 8px 10px; margin: -10px -10px 12px; }
+.top a { margin-right: 12px; }
+.foot { border-top: 1px solid #ddd; margin-top: 18px; padding-top: 10px; color: #666; font-size: 12px; }
+.meta { color: #666; font-size: 12px; }
+
+ul.list { list-style: none; margin: 0; padding: 0; }
+ul.list li { padding: 8px 0; border-bottom: 1px solid #eee; }
+.t { font-weight: bold; }
+
+table.kv { border-collapse: collapse; width: 100%; }
+table.kv td { border: 1px solid #ddd; padding: 6px 8px; vertical-align: top; }
+table.kv td.k { width: 110px; background: #fafafa; color: #555; }
+
+.pager { margin: 14px 0; }
+.pager a { margin-right: 12px; }
+
+pre.body { white-space: pre-wrap; word-wrap: break-word; margin: 8px 0; }
+.ph { color: #999; border: 1px dashed #ccc; padding: 6px 8px; display: block; margin: 6px 0; font-size: 12px; }
+img.pic { border: 0; }
+.tag { border: 1px solid #ddd; background: #f7f7f7; padding: 1px 6px; margin-right: 6px; font-size: 12px; }
+
+.err { border: 1px solid #e0b4b4; background: #fff6f6; color: #912d2d; padding: 8px 10px; margin: 10px 0; }
+.notice { border: 1px solid #d8d8e0; background: #f7f7fb; color: #333; padding: 9px 12px; margin: 10px 0; }
+.ok { border: 1px solid #b7dfb7; background: #f6fff6; color: #2d6a2d; padding: 8px 10px; margin: 10px 0; }
+
+input.q { border: 1px solid #bbb; padding: 5px 7px; font-size: 14px; width: 60%; }
+input.btn { border: 1px solid #bbb; background: #f6f6f6; padding: 5px 12px; font-size: 14px; cursor: pointer; }
+textarea.q { border: 1px solid #bbb; padding: 6px 8px; font-size: 14px; width: 90%; font-family: "Microsoft YaHei", SimSun, sans-serif; }
+iframe { border: 1px solid #ddd; background: #fafafa; }
+input[disabled] { color: #999; background: #f0f0f0; cursor: default; }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>KitterHubSE</title>
+<!-- 站标：与主站同一套资源。ico 在先（老 IE 只认 ico），PNG 在后（现代浏览器更清晰）。
+     v=2：IE 的 favicon 缓存按 URL 记，刷页面不会更新图标，只有 URL 变了才会重新拉。 -->
+<link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48 64x64">
+<link rel="icon" type="image/png" sizes="256x256" href="/kitter-favicon.png?v=2">
+<link rel="apple-touch-icon" href="/kitter-favicon.png?v=2">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="top">
+  <a href="#/">首页</a>
+  <a href="#/forum">论坛</a>
+  <a href="#/works">作品</a>
+  <a href="#/search">搜索</a>
+  <a href="#/settings">设置</a>
+  <a href="#/notifications">通知</a>
+  <span id="auth" class="meta"></span>
+  <span class="meta">｜图片：<a href="#/img/1" id="img_on">开</a> <a href="#/img/0" id="img_off">关</a></span>
+</div>
+
+<div id="app">
+  <p class="meta">正在载入…</p>
+</div>
+
+<div class="foot">
+  <a href="https://example.com/">KitterHub 主站</a>
+</div>
+
+<!-- 普通脚本，不用 type=module —— IE11 不执行 module 脚本（这是之前一直卡在"正在载入"的原因） -->
+<script src="/app.js"></script>
+
+</body>
+</html>

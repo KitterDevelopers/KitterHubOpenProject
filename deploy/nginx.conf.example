@@ -1,0 +1,170 @@
+# =============================================================================
+# KitterHub nginx 站点配置示例
+# =============================================================================
+# 用法：
+#   sudo cp deploy/nginx.conf.example /etc/nginx/conf.d/kitterhub.conf
+#   sudo editor /etc/nginx/conf.d/kitterhub.conf      # 按下表替换占位符
+#   sudo nginx -t && sudo systemctl reload nginx
+#
+# ★ 使用前必须替换的占位符（全部是假的，不要照抄上线）：
+#   example.com        → 你的站点主域名
+#   pages.example.com  → 你的 Pages 托管域名（不用该功能可删掉对应 server 块）
+#   /srv/kitterhub     → 你的实际部署路径
+#   /etc/letsencrypt/live/example.com/ → 你的证书路径
+#
+# 设计要点（与 docs/ARCHITECTURE.md 一致）：
+#   · 后端**只监听 127.0.0.1:8000**，公网流量一律经过本机 nginx；
+#   · /api 与 /socket.io 都反代到同一个 8000 端口，按路径分流；
+#   · /uploads/ 由 nginx 直接托管（公开上传）；
+#   · backend/private/（护照/证件图）**绝不能被 nginx 挂载**，只能由后端校验权限后读取。
+# =============================================================================
+
+# 上传上限：必须 ≥ 应用层上限，否则会在 nginx 层直接 413。
+# 应用层参考 backend/app/config.py：视频 30MB、.sb3 作品包 50MB（可用环境变量调整）。
+client_max_body_size 64m;
+
+# gzip（静态资源收益明显）
+gzip on;
+gzip_comp_level 5;
+gzip_min_length 1024;
+gzip_types text/plain text/css application/javascript application/json
+           image/svg+xml application/xml;
+
+# -----------------------------------------------------------------------------
+# 主站：example.com
+# -----------------------------------------------------------------------------
+server {
+    listen 80;
+    listen [::]:80;
+    server_name example.com;
+
+    # 证书签发用的 ACME 挑战目录（用 certbot --webroot 时保留）；
+    # 若使用 certbot --nginx 或其它方式，可删掉这一段。
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+        default_type "text/plain";
+    }
+
+    # 其余 http 一律跳 https（没有证书时先注释掉本行）
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
+    server_name example.com;
+
+    # ★ 换成你自己的证书路径
+    ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    ssl_session_cache   shared:SSL:10m;
+
+    # 基础安全响应头（按需调整 CSP）
+    add_header X-Content-Type-Options nosniff always;
+    add_header X-Frame-Options SAMEORIGIN always;
+    add_header Referrer-Policy strict-origin-when-cross-origin always;
+
+    # ---- 主站前端静态文件（frontend/dist）----
+    # ★ 换成你的实际路径
+    root /srv/kitterhub/frontend/dist;
+    index index.html;
+
+    # 带 hash 的构建产物可以长缓存
+    location /assets/ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # SPA 路由回退：前端是 history 路由，未知路径一律交给 index.html
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # ---- 后端接口 ----
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # 后端 run.py 设了 forwarded_allow_ips="127.0.0.1"，只信任本机写入的这几个头
+        proxy_read_timeout 120s;
+    }
+
+    # ---- Socket.IO（私信 / 通知推送）：必须放行 WebSocket 升级 ----
+    location /socket.io/ {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade    $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 3600s;   # 长连接，别用默认 60s 把它掐断
+        proxy_send_timeout 3600s;
+    }
+
+    # ---- 公开上传目录（作品封面、帖子图、视频、.sb3）----
+    # ★ 换成你的实际路径；对应环境变量不改的话后端就写在 backend/uploads/
+    location /uploads/ {
+        alias /srv/kitterhub/backend/uploads/;
+        expires 7d;
+        add_header Cache-Control "public";
+        # 上传目录里只有静态文件，禁止执行任何脚本
+        location ~* \.(php|py|pl|sh|cgi)$ { deny all; }
+    }
+
+    # ⚠️ 注意：不要在这里挂载 /srv/kitterhub/backend/private/
+    #    该目录是护照/证件图，只能由后端校验权限后读取（见 backend/app/routers/verify.py）。
+
+    # ---- pickCat 头像工具（同源反代，路径与 NIMAO_PICKCAT_API_BASE 一致）----
+    # 不部署该工具时，把这一段整块注释掉。
+    # location /pickcat-avatar/ {
+    #     proxy_pass http://127.0.0.1:9080/;
+    #     proxy_set_header Host              $host;
+    #     proxy_set_header X-Real-IP         $remote_addr;
+    #     proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+    #     proxy_set_header X-Forwarded-Proto $scheme;
+    # }
+
+    # ---- 自建云变量服务（Scratch cloud variables）----
+    # 需要另外部署 cloud/ 服务（本次开源**未包含**，见 CHANGELOG「未包含」）。
+    # 地址要与 NIMAO_CLOUD_HOST（如 wss://example.com/cloud）对应。
+    # location /cloud {
+    #     proxy_pass http://127.0.0.1:9081;
+    #     proxy_http_version 1.1;
+    #     proxy_set_header Upgrade    $http_upgrade;
+    #     proxy_set_header Connection "upgrade";
+    #     proxy_set_header Host              $host;
+    #     proxy_set_header X-Real-IP         $remote_addr;
+    #     proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+    #     proxy_read_timeout 3600s;
+    # }
+}
+
+# -----------------------------------------------------------------------------
+# KitterHub Pages（用户静态项目托管）：可选
+# -----------------------------------------------------------------------------
+# 不使用 Pages 功能就整块删掉，并把 NIMAO_PAGES_DOMAIN 留空即可。
+# Pages 目录由后端在请求时校验权限后写出，这里只负责静态托管。
+#
+# server {
+#     listen 443 ssl;
+#     http2 on;
+#     server_name pages.example.com;
+#
+#     ssl_certificate     /etc/letsencrypt/live/pages.example.com/fullchain.pem;
+#     ssl_certificate_key /etc/letsencrypt/live/pages.example.com/privkey.pem;
+#
+#     root /srv/kitterhub/pages;   # 需与 NIMAO_PAGES_ROOT 一致
+#     index index.html;
+#     location / { try_files $uri $uri/ =404; }
+# }
