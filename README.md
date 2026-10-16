@@ -24,7 +24,6 @@ KitterHub 是一个面向**青少年创作者**的社区网站：作品投稿与
 
 - [1. 项目简介](#1-项目简介)
 - [2. 功能清单](#2-功能清单)
-- [3. 截图](#3-截图)
 - [4. 技术栈](#4-技术栈)
 - [5. 目录结构](#5-目录结构)
 - [6. 本地跑起来](#6-本地跑起来)
@@ -127,7 +126,6 @@ KitterHub 是一个把「作品社区 + 论坛 + 工作室 + 私信」放在一�
 
 ### 2.6 经验等级与徽章（XP / Levels / Badges）
 
-- 等级 LV0–LV7，六级徽章为六边形设计，带级数与颜色区分（见截图之外的 `level_*` 系列设计稿来源）。
   经验门槛（来自 `frontend/public/guide/faq.md`）：
   LV0 注册即得；签订《友好条约》升 LV1；LV2 = 200、LV3 = 700、LV4 = 1500、
   LV5 = 5000、LV6 = 10000、LV7 = 50000 经验。
@@ -235,36 +233,6 @@ KitterHub 是一个把「作品社区 + 论坛 + 工作室 + 私信」放在一�
   支持给管理员官号固定属地与豁免名单。
 - **地图活动**：「锦绣山河·点亮中国」类活动，按访问者属地记录点亮的省份。
 - **站点维护模式**与维护页。
-
-## 3. 截图
-
-> 以下截图均来自本项目界面，**已逐张确认不含真实用户名、头像、帖子内容或个人信息**。
-> 由于主站的首页 / 发现 / 个人主页等页面天然会显示用户昵称与作品标题，
-> 出于隐私考虑**没有**收录这些页面的截图。
-
-### 使用说明（文档中心，深色主题）
-
-![使用说明](docs/screenshots/01-help-center-dark.png)
-
-### 社区规则中心（《KitterHub 社区管理规定》第一篇·总纲）
-
-![规则中心](docs/screenshots/02-rules-center.png)
-
-### SE 精简版（IE11 可用的只读界面）
-
-![SE 版](docs/screenshots/04-se-edition.png)
-
-### pickCat 头像工具页（浅色主题）
-
-![pickCat 浅色](docs/screenshots/05-pickcat-tool-light.png)
-
-### pickCat 头像工具页（深色主题，同一页面的主题切换效果）
-
-![pickCat 深色](docs/screenshots/06-pickcat-tool-dark.png)
-
-### 维护模式页
-
-![维护中](docs/screenshots/03-maintenance.png)
 
 ## 4. 技术栈
 
@@ -419,7 +387,6 @@ KitterHubOpenProject/
 │   ├── SECURITY.md               安全实践与漏洞上报
 │   ├── FAQ.md                    常见问题
 │   ├── public-api.md             对外公开 API 的说明（已有文档）
-│   └── screenshots/              界面截图（6 张，已确认无真实用户信息）
 │
 └── deploy/                       部署示例（域名一律为 example.com 占位符）
     ├── nginx.conf.example        nginx 站点配置示例
@@ -859,7 +826,6 @@ sudo systemctl daemon-reload && sudo systemctl enable --now kitterhub-backend
 完整的贡献流程见 [`CONTRIBUTING.md`](CONTRIBUTING.md)，要点：
 
 1. 先读 [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)——本项目面向青少年用户，
-   **绝不允许**在 issue / PR 里粘贴真实用户名、UID、截图、数据库、日志或任何服务器信息。
 2. 环境要求：Python 3.10+、Node.js 18+。
 3. 提交前必做：
    - `cd backend && python run.py` 能正常启动；
@@ -940,12 +906,8 @@ python -c "import secrets;print(secrets.token_urlsafe(48))"
 - **无违规 3 票**（`app/committee.py` 的 `VOTE_THRESHOLD = 3`）= **3 位不同的风纪委员**
   都投「无违规」→ 恢复内容展示、结掉复审记录、驳回未处理举报。
 
-### Q8. 为什么截图里没有首页、发现页和个人主页？
-
 因为这些页面天然会显示真实用户的昵称、头像、作品标题与评论内容。
-本项目用户以未成年人为主，出于隐私考虑只收录了**不含任何用户信息**的界面截图
 （文档中心、规则中心、SE 版登录、头像工具页、维护页）。
-需要更多截图时请自行在**本地空白数据**的实例上截取。
 
 ---
 
